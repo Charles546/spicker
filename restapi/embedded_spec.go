@@ -74,31 +74,37 @@ func init() {
         "close": {
           "description": "closing price",
           "type": "number",
-          "format": "float"
+          "format": "float",
+          "example": 15.78
         },
         "date": {
           "description": "the date of the prices",
-          "type": "string"
+          "type": "string",
+          "example": "2020-04-28"
         },
         "high": {
           "description": "highest price of the day",
           "type": "number",
-          "format": "float"
+          "format": "float",
+          "example": 16.12
         },
         "low": {
           "description": "lowest price of the day",
           "type": "number",
-          "format": "float"
+          "format": "float",
+          "example": 15.01
         },
         "open": {
           "description": "opening price",
           "type": "number",
-          "format": "float"
+          "format": "float",
+          "example": 15.09
         },
         "volume": {
           "description": "traded volume",
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "example": 83497533
         }
       }
     }
@@ -161,31 +167,37 @@ func init() {
         "close": {
           "description": "closing price",
           "type": "number",
-          "format": "float"
+          "format": "float",
+          "example": 15.78
         },
         "date": {
           "description": "the date of the prices",
-          "type": "string"
+          "type": "string",
+          "example": "2020-04-28"
         },
         "high": {
           "description": "highest price of the day",
           "type": "number",
-          "format": "float"
+          "format": "float",
+          "example": 16.12
         },
         "low": {
           "description": "lowest price of the day",
           "type": "number",
-          "format": "float"
+          "format": "float",
+          "example": 15.01
         },
         "open": {
           "description": "opening price",
           "type": "number",
-          "format": "float"
+          "format": "float",
+          "example": 15.09
         },
         "volume": {
           "description": "traded volume",
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "example": 83497533
         }
       }
     }

@@ -18,21 +18,27 @@ import (
 type Stockprice struct {
 
 	// closing price
+	// Example: 15.78
 	Close float32 `json:"close,omitempty"`
 
 	// the date of the prices
+	// Example: 2020-04-28
 	Date string `json:"date,omitempty"`
 
 	// highest price of the day
+	// Example: 16.12
 	High float32 `json:"high,omitempty"`
 
 	// lowest price of the day
+	// Example: 15.01
 	Low float32 `json:"low,omitempty"`
 
 	// opening price
+	// Example: 15.09
 	Open float32 `json:"open,omitempty"`
 
 	// traded volume
+	// Example: 83497533
 	Volume int64 `json:"volume,omitempty"`
 }
 

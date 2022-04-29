@@ -10,26 +10,32 @@ definitions:
             date:
                 type: string
                 description: the date of the prices
+                example: 2020-04-28
             open:
                 type: number
                 format: float
                 description: opening price
+                example: 15.09
             high:
                 type: number
                 format: float
                 description: highest price of the day
+                example: 16.12
             low:
                 type: number
                 format: float
                 description: lowest price of the day
+                example: 15.01
             close:
                 type: number
                 format: float
                 description: closing price
+                example: 15.78
             volume:
                 type: integer
                 format: int64
                 description: traded volume
+                example: 83497533
 paths:
     /stockprices:
         get:
