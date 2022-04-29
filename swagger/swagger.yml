@@ -1,0 +1,66 @@
+---
+swagger: '2.0'
+info:
+    version: 0.1.0
+    title: Stock price grabber
+definitions:
+    stockprice:
+        type: object
+        properties:
+            date:
+                type: string
+                description: the date of the prices
+            open:
+                type: number
+                format: float
+                description: opening price
+            high:
+                type: number
+                format: float
+                description: highest price of the day
+            low:
+                type: number
+                format: float
+                description: lowest price of the day
+            close:
+                type: number
+                format: float
+                description: closing price
+            volume:
+                type: integer
+                format: int64
+                description: traded volume
+paths:
+    /stockprices:
+        get:
+            produces:
+                - application/json
+            parameters: []
+            operationId: stockprices
+            responses:
+                200:
+                    description: return certain history prices and the average closing prices for a certain stock.
+                    schema:
+                        type: object
+                        description: the stock prices
+                        required:
+                            - history
+                            - average
+                            - symbol
+                        properties:
+                            symbol:
+                                type: string
+                                description: the stock symbol
+                                example: QQQ
+                            average:
+                                type: number
+                                format: float
+                                description: average closing price of the past N days
+                                example: 15.56
+                            history:
+                                type: array
+                                description: the history prices
+                                items:
+                                    "$ref": "#/definitions/stockprice"
+
+
