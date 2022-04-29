@@ -5,7 +5,6 @@ package restapi
 import (
 	"encoding/json"
 	"fmt"
-	"golang.org/x/exp/maps"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -13,10 +12,10 @@ import (
 	"sort"
 	"strconv"
 
-	"github.com/go-openapi/runtime/middleware"
-
 	"github.com/Charles546/spicker/v2/models"
 	"github.com/Charles546/spicker/v2/restapi/operations"
+	"github.com/go-openapi/runtime/middleware"
+	"golang.org/x/exp/maps"
 )
 
 // StockpricesGrabberConfig is a data structure storing the configs.
@@ -45,14 +44,17 @@ func getConfig() *StockpricesGrabberConfig {
 
 	if len(APIConfig.symbol) == 0 {
 		APIConfig.err = middleware.Error(http.StatusInternalServerError, "configuration missing for operations.Stockprices: SYMBOL")
+
 		return APIConfig
 	}
 	if len(ndaysStr) == 0 {
 		APIConfig.err = middleware.Error(http.StatusInternalServerError, "configuration missing for operations.Stockprices: NDAYS")
+
 		return APIConfig
 	}
 	if len(apikey) == 0 {
 		APIConfig.err = middleware.Error(http.StatusInternalServerError, "configuration missing for operations.Stockprices: ALPHAVANTAGE_APKEY")
+
 		return APIConfig
 	}
 
@@ -60,6 +62,7 @@ func getConfig() *StockpricesGrabberConfig {
 	APIConfig.ndays, err = strconv.Atoi(ndaysStr)
 	if err != nil {
 		APIConfig.err = middleware.Error(http.StatusInternalServerError, "invalid configuration for operations.Stockprices: NDAYS")
+
 		return APIConfig
 	}
 	outputSize := "compact"
@@ -68,6 +71,7 @@ func getConfig() *StockpricesGrabberConfig {
 	}
 
 	APIConfig.url = fmt.Sprintf(APIPattern, apikey, APIConfig.symbol, outputSize)
+
 	return APIConfig
 }
 
@@ -78,19 +82,20 @@ func getStockprices(params operations.StockpricesParams) middleware.Responder {
 	}
 
 	resp, err := http.Get(c.url)
-
 	if err != nil {
-		log.Printf("operations.Stockprices api response error: %w\n", err)
+		log.Printf("operations.Stockprices api response error: %+v\n", err)
+
 		return middleware.Error(http.StatusInternalServerError, "operations.Stockprices failed")
 	}
 
 	var j map[string]interface{}
 	body, err := ioutil.ReadAll(resp.Body)
 	if err == nil {
-		json.Unmarshal(body, &j)
+		err = json.Unmarshal(body, &j)
 	}
 	if err != nil {
-		log.Printf("operations.Stockprices api parse error: %w\n", err)
+		log.Printf("operations.Stockprices api parse error: %+v\n", err)
+
 		return middleware.Error(http.StatusInternalServerError, "operations.Stockprices failed")
 	}
 

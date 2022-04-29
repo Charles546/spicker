@@ -6,11 +6,10 @@ import (
 	"crypto/tls"
 	"net/http"
 
+	"github.com/Charles546/spicker/v2/restapi/operations"
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
-
-	"github.com/Charles546/spicker/v2/restapi/operations"
 )
 
 //go:generate swagger generate server --target ../../spicker --name StockPriceGrabber --spec ../swagger/swagger.yml --principal interface{}
