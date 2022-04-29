@@ -37,7 +37,7 @@ func configureAPI(api *operations.StockPriceGrabberAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
-    api.StockpricesHandler = operations.StockpricesHandlerFunc(getStockprices)
+	api.StockpricesHandler = operations.StockpricesHandlerFunc(getStockprices)
 
 	if api.StockpricesHandler == nil {
 		api.StockpricesHandler = operations.StockpricesHandlerFunc(func(params operations.StockpricesParams) middleware.Responder {
