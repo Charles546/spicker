@@ -1,0 +1,60 @@
+---
+linters:
+  enable:
+    - asciicheck
+    - depguard
+    - dogsled
+    - dupl
+    - errorlint
+    - exportloopref
+    - funlen
+    - gci
+    - gochecknoinits
+    - gocognit
+    - goconst
+    - gocritic
+    - gocyclo
+    - godot
+    - godox
+    - goerr113
+    - gofmt
+    - gofumpt
+    - goheader
+    - goimports
+#    - gomnd
+    - gomodguard
+    - goprintffuncname
+    - gosec
+    - lll
+    - misspell
+    - nakedret
+    - nestif
+    - nlreturn
+    - noctx
+    - nolintlint
+    - paralleltest
+    - prealloc
+    - revive
+    - rowserrcheck
+    - sqlclosecheck
+    - stylecheck
+    - testpackage
+    - tparallel
+    - unconvert
+    - unparam
+    - whitespace
+    - wrapcheck
+
+linters-settings:
+  lll:
+    line-length: 142
+  funlen:
+    lines: 120
+    statements: 80
+  gocognit:
+    min-complexity: 60
+
+run:
+  tests: false
+  timeout: 5m
+

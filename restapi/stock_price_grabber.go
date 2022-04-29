@@ -12,6 +12,7 @@ import (
 	"sort"
 	"strconv"
 
+	"github.com/Charles546/spicker/v2/app"
 	"github.com/Charles546/spicker/v2/models"
 	"github.com/Charles546/spicker/v2/restapi/operations"
 	"github.com/go-openapi/runtime/middleware"
@@ -81,54 +82,59 @@ func getStockprices(params operations.StockpricesParams) middleware.Responder {
 		return c.err
 	}
 
-	resp, err := http.Get(c.url)
-	if err != nil {
-		log.Printf("operations.Stockprices api response error: %+v\n", err)
+	ret := app.FromCache(c.symbol, c.ndays)
+	if ret == nil {
+		resp, err := http.Get(c.url)
+		if err != nil {
+			log.Printf("operations.Stockprices api response error: %+v\n", err)
 
-		return middleware.Error(http.StatusInternalServerError, "operations.Stockprices failed")
+			return middleware.Error(http.StatusInternalServerError, "operations.Stockprices failed")
+		}
+
+		var j map[string]interface{}
+		body, err := ioutil.ReadAll(resp.Body)
+		if err == nil {
+			err = json.Unmarshal(body, &j)
+		}
+		if err != nil {
+			log.Printf("operations.Stockprices api parse error: %+v\n", err)
+
+			return middleware.Error(http.StatusInternalServerError, "operations.Stockprices failed")
+		}
+
+		hist := j["Time Series (Daily)"].(map[string]interface{})
+		dates := maps.Keys(hist)
+		sort.Slice(dates, func(i, j int) bool { return dates[i] > dates[j] })
+
+		ret = &operations.StockpricesOKBody{}
+		ret.Symbol = &c.symbol
+		ret.History = make([]*models.Stockprice, c.ndays)
+
+		var sum float32
+		for i := 0; i < c.ndays; i++ {
+			prices := hist[dates[i]].(map[string]interface{})
+			open, _ := strconv.ParseFloat(prices["1. open"].(string), 32)
+			high, _ := strconv.ParseFloat(prices["2. high"].(string), 32)
+			low, _ := strconv.ParseFloat(prices["3. low"].(string), 32)
+			cl, _ := strconv.ParseFloat(prices["4. close"].(string), 32)
+
+			day := models.Stockprice{}
+			day.Date = dates[i]
+			day.Volume, _ = strconv.ParseInt(prices["5. volume"].(string), 10, 64)
+			day.Open = float32(open)
+			day.High = float32(high)
+			day.Low = float32(low)
+			day.Close = float32(cl)
+
+			ret.History[i] = &day
+
+			sum += day.Close
+		}
+		average := sum / float32(c.ndays)
+		ret.Average = &average
+
+		app.Cache(c.symbol, c.ndays, ret)
 	}
 
-	var j map[string]interface{}
-	body, err := ioutil.ReadAll(resp.Body)
-	if err == nil {
-		err = json.Unmarshal(body, &j)
-	}
-	if err != nil {
-		log.Printf("operations.Stockprices api parse error: %+v\n", err)
-
-		return middleware.Error(http.StatusInternalServerError, "operations.Stockprices failed")
-	}
-
-	hist := j["Time Series (Daily)"].(map[string]interface{})
-	dates := maps.Keys(hist)
-	sort.Slice(dates, func(i, j int) bool { return dates[i] > dates[j] })
-
-	ret := operations.StockpricesOKBody{}
-	ret.Symbol = &c.symbol
-	ret.History = make([]*models.Stockprice, c.ndays)
-
-	var sum float32
-	for i := 0; i < c.ndays; i++ {
-		prices := hist[dates[i]].(map[string]interface{})
-		open, _ := strconv.ParseFloat(prices["1. open"].(string), 32)
-		high, _ := strconv.ParseFloat(prices["2. high"].(string), 32)
-		low, _ := strconv.ParseFloat(prices["3. low"].(string), 32)
-		cl, _ := strconv.ParseFloat(prices["4. close"].(string), 32)
-
-		day := models.Stockprice{}
-		day.Date = dates[i]
-		day.Volume, _ = strconv.ParseInt(prices["5. volume"].(string), 10, 64)
-		day.Open = float32(open)
-		day.High = float32(high)
-		day.Low = float32(low)
-		day.Close = float32(cl)
-
-		ret.History[i] = &day
-
-		sum += day.Close
-	}
-	average := sum / float32(c.ndays)
-	ret.Average = &average
-
-	return operations.NewStockpricesOK().WithPayload(&ret)
+	return operations.NewStockpricesOK().WithPayload(ret)
 }
