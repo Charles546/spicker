@@ -29,6 +29,7 @@ vendor/**
 
 # local environment files
 **/.env
+**/.env.*
 
 # docker compose override files
 **/docker-compose.override.yml

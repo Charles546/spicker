@@ -5,6 +5,7 @@ package app
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -56,15 +57,19 @@ func FromCache(symbol string, ndays int) *operations.StockpricesOKBody {
 
 	ctx, cancel := getContext()
 	defer cancel()
-	b, e := c.Get(ctx, fmt.Sprintf("%s,%d", symbol, ndays)).Bytes()
+	b, e := c.Get(ctx, fmt.Sprintf("%s_%d", symbol, ndays)).Result()
 	if e != nil {
-		log.Printf("server cache error: %+v\n", e)
+		if errors.Is(e, redis.Nil) {
+			log.Printf("redis key not found: %s_%d\n", symbol, ndays)
+		} else {
+			log.Printf("server cache error: %+v\n", e)
+		}
 
 		return nil
 	}
 
 	ret := operations.StockpricesOKBody{}
-	e = json.Unmarshal(b, &ret)
+	e = json.Unmarshal([]byte(b), &ret)
 	if e != nil {
 		log.Printf("server cache unmarshal error: %+v\n", e)
 
@@ -96,7 +101,7 @@ func Cache(symbol string, ndays int, payload *operations.StockpricesOKBody) {
 
 	ctx, cancel := getContext()
 	defer cancel()
-	_, e = c.SetEX(ctx, fmt.Sprintf("%s,%d", symbol, ndays), b, available.Sub(now)).Result()
+	_, e = c.SetEX(ctx, fmt.Sprintf("%s_%d", symbol, ndays), b, available.Sub(now)).Result()
 	if e != nil {
 		log.Printf("server cache save error: %+v\n", e)
 	}

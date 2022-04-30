@@ -26,8 +26,8 @@ fi
 project_root="$(dirname "$0")/.."
 cd "$project_root"
 
-if [[ -f .env.default ]]; then
-      export $(cat .env.default | xargs)
+if [[ -f .default.env ]]; then
+      export $(cat .default.env | xargs)
 fi
 if [ ! -f .env ]; then
     echo "The .env.${ENV} file doesnt exists" >&2

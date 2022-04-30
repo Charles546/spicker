@@ -1,0 +1,41 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stock-prices-grabber-cache
+  labels:
+    app: stock-prices-grabber-cache
+spec:
+  selector:
+    matchLabels:
+      app: stock-prices-grabber-cache
+  template:
+    metadata:
+      labels:
+        app: stock-prices-grabber-cache
+    spec:
+      containers:
+      - name: redis
+        image: redis:7.0.0-bullseye
+        ports:
+        - containerPort: 6379
+        resources:
+          limits:
+            cpu: 100m
+            memory: 100Mi
+          requests:
+            cpu: 64m
+            memory: 64Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: stock-prices-grabber-cache
+  labels:
+    app: stock-prices-grabber-cache
+spec:
+  ports:
+  - port: 6379
+    targetPort: 6379
+  selector:
+    app: stock-prices-grabber-cache

@@ -19,8 +19,8 @@ REQUIRED_ENV=(
 project_root="$(dirname "$0")/.."
 cd "$project_root"
 
-if [[ -f .env.default ]]; then
-      export $(cat .env.default | xargs)
+if [[ -f .default.env ]]; then
+      export $(cat .default.env | xargs)
 fi
 if [[ -f .env ]]; then
       export $(cat .env | xargs)
