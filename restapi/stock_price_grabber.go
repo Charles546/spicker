@@ -102,6 +102,12 @@ func getStockprices(params operations.StockpricesParams) middleware.Responder {
 			return middleware.Error(http.StatusInternalServerError, "operations.Stockprices failed")
 		}
 
+		if msg := j["Error Message"]; msg != nil {
+			log.Printf("api response error: %+v\n", msg)
+
+			return middleware.Error(http.StatusInternalServerError, "operations.Stockprices failed")
+		}
+
 		hist := j["Time Series (Daily)"].(map[string]interface{})
 		dates := maps.Keys(hist)
 		sort.Slice(dates, func(i, j int) bool { return dates[i] > dates[j] })
