@@ -19,6 +19,11 @@ A wrapper script `scripts/run.sh` is provided to easily launch the API server. Y
  - **ALPHAVANGAGE_APIKEY**: The API key to [alphavantage.co](https://alphavantage.co)
  - **REDIS_CONNECTION**: A url to a redis instance, such as `redis://@localhost:6379/0`, optional
 
+You can leave everything except the APIKEY to default (See `.default.env`). You can supply it through the command, or add the value to your `.env` file. For example
+```bash
+ALPHAVANTAGE_APIKEY=xxxxxxx ./scripts/run.sh
+```
+
 Once the server is running, you can access the swagger documents at [http://localhost:3000/docs](http://localhost:3000/docs).
 
 Run the below curl command to see the result.
@@ -30,7 +35,7 @@ curl http://localhost:3000/stockprices
 Building
 --------
 
-The wrapper script `scripts/build.sh` will build the API server into a docker image and push into the docker registry. It requires **IMAGE_REPO** and **IMAGE_TAG** environment variables.
+The wrapper script `scripts/build.sh` will build the API server into a docker image and push into the docker registry. It requires **IMAGE_REPO** and **IMAGE_TAG** environment variables. For pushing the image, Docker hub credential needs to be configured.
 
 
 Deploying
@@ -50,3 +55,17 @@ The wrapper script `scripts/deploy.sh` will deploy the application into a Kubern
  - **MEM_REQUEST**: The size of the memory requested at the pod startup
  - **MEM_LIMIT**: The limit of how much memory the pod can use
  - **MEM_THRESHOLD**: The threshold used for measuring the memory utilization for autoscaler
+
+The environment variables should go in the `.env.<environment>` file such as `.env.dev`, `.env.prod` etc. Specify the environment with `ENV` variable.
+
+For example, supply the key and kubectl context through command line:
+```bash
+ALPHAVANTAGE_APIKEY_BASE64=xxxxxxxx KUBE_CONTEXT=`kubectl config current-context` ENV=dev ./scripts/deploy.sh
+```
+
+To take advantage of redis caching, assuming you have everything else in the `.env.prod` file:
+```bash
+kubectl apply -f auxiliary/redis.yaml
+REDIS_CONNECTION=redis://@stock-prices-grabber-cache:6379/0  ENV=prod ./scripts/deploy.sh
+```
+

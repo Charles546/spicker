@@ -29,11 +29,9 @@ cd "$project_root"
 if [[ -f .default.env ]]; then
       export $(cat .default.env | xargs)
 fi
-if [ ! -f .env ]; then
-    echo "The .env.${ENV} file doesnt exists" >&2
-    exit 1
+if [ -f ".env.${ENV}" ]; then
+    export $(cat ".env.${ENV}" | xargs)
 fi
-export $(cat ".env.${ENV}" | xargs)
 
 for v in "${REQUIRED_ENV[@]}"; do
     if [[ -z "$(eval echo \$${v})" ]]; then
