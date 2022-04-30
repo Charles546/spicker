@@ -19,6 +19,13 @@ A wrapper script `scripts/run.sh` is provided to easily launch the API server. Y
  - **ALPHAVANGAGE_APIKEY**: The API key to [alphavantage.co](https://alphavantage.co)
  - **REDIS_CONNECTION**: A url to a redis instance, such as `redis://@localhost:6379/0`, optional
 
+Once the server is running, you can access the swagger documents at [http://localhost:3000/docs](http://localhost:3000/docs).
+
+Run the below curl command to see the result.
+
+```bash
+curl http://localhost:3000/stockprices
+```
 
 Building
 --------
@@ -29,7 +36,7 @@ The wrapper script `scripts/build.sh` will build the API server into a docker im
 Deploying
 ---------
 
-The wrapper script `scripts/deploy.sh` will deploy the application into a Kubernetes cluster, including a deployment, a service, a secret and a horizontal pod autoscaler. You can customize the deployments with all the environment variables. Besides the environment variables mentioned above in the Running locally section, a few more environments are supported.
+The wrapper script `scripts/deploy.sh` will deploy the application into a Kubernetes cluster, including a deployment, a service, a secret and a horizontal pod autoscaler. You can customize the deployments with all the environment variables. Besides the environment variables mentioned above in the [Running locally](#running-locally) section, a few more environments are supported.
 
  - **ALPHAVANTAGE_APIKEY_BASE64**: base64 encoded API key used for creating the Kubernetes secret
  - **KUBE_CONTEXT**: Specify the kubectl context explicitly to avoid mistakes
