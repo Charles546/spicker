@@ -1,0 +1,40 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stock-prices-grabber
+  labels:
+    app: stock-prices-grabber
+spec:
+  selector:
+    matchLabels:
+      app: stock-prices-grabber
+  template:
+    metadata:
+      labels:
+        app: stock-prices-grabber
+    spec:
+      containers:
+      - name: spicker
+        image: ${IMAGE_REPO}:${IMAGE_TAG}
+        ports:
+        - containerPort: 8080
+        env:
+          - name: SYMBOL
+            value: "${SYMBOL}"
+          - name: NDAYS
+            value: "${NDAYS}"
+          - name: ALPHAVANTAGE_APIKEY
+            valueFrom:
+              secretKeyRef:
+                name: stock-prices-grabber
+                key: ALPHAVANTAGE_APIKEY
+          - name: REDIS_CONNECTION
+            value: "${REDIS_CONNECTION}"
+        resources:
+          limits:
+            cpu: ${CPU_LIMIT}
+            memory: ${MEM_LIMIT}
+          requests:
+            cpu: ${CPU_REQUEST}
+            memory: ${MEM_REQUEST}
